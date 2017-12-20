@@ -1,66 +1,37 @@
-#include "game_session.hpp"
-#include "human_player.hpp"
-
-#inclue <iostream>
+#include <iostream>
 #include <string>
 
-class interface {
-public:
-  void playtest(std::vector<std::string> players) {
-   auto playloop = [](auto game){
-    while(true) {
-      game = Game();
-      game.play();
-      std::cout << game.winner() << " wins! " << std::endl;
-      std::cout << "Play again? [y/n]: " <<;
-      char ch;
-      std::cin >> ch;
-      if(ch != "y")
-        break;
-    }
-   }
-   if(players[0] == "human") {
-     if(players[1] == "human") {
-       playloop<tic_tac_toe<human_player, human_player>>();
-     }
-     else if(players[1] == "ai") {
+//#include "tic_board.hpp"
+#include "human_player.hpp"
+
+template<class PlayerX, class PlayerO = PlayerO>
+void play() {
+  PlayerX playerx;
+  PlayerO playero;
+  while(true) {
     
-     }
-     else usage();
-   }
-   else if(players[0] == "ai") {
-     if(players[1] == "human") {
-        
-     }
-     else if(players[1] == "ai") {
-         
-     }
-     else usage();
-   }
-   else usage();
   }
-  void run(const std::vector<std::string>& args) {
-    if(args.size() == 4) {
-      if(args[1] == "playtest") {
-        playtest({args[2], args[3]});
-      }
-    }
-    else usage();
-  }
-  usage() {
-    std::cout << argv[0] << " playtest [X] [O] (human or ai)" << std::endl
-              << argv[0] << " train [batches] [games]" << std::endl;
-  }
-};
+}
+
+void train() {
+}
+
+void usage(const std::string& name) {
+  std::cout << name << " version 0.0" << std::endl
+            << "usage: " << std::endl
+            << name << std::endl
+            << name << " -train" << std::endl;  
+}
 
 int main(int argc, char* argv[]) {
-  std::vector<std::string> args(argc);
-  for(int i=0; i<argc; ++i) 
-    args[i] = argv[i];
-  interface iface;
-  iface.run(args);
+  if(argc == 1)
+    play();
+  else if(argc == 2)
+    if(argv[2] == "-train") 
+      train();
+    else
+      usage(argv[0]);
+  else
+    usage(argv[0]);
   return 0;    
-}
-    
-  return 0;
 }

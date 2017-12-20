@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.9)
+cmake_minimum_required (VERSION 3.5)
 project(tic-tac-toe)
 
 if (CMAKE_VERSION VERSION_LESS "3.1")
@@ -6,7 +6,7 @@ if (CMAKE_VERSION VERSION_LESS "3.1")
     set (CMAKE_CXX_FLAGS "--std=gnu++11 ${CMAKE_CXX_FLAGS}")
     endif ()
   else ()
-    set (CMAKE_CXX_STANDARD 17)
+    set (CMAKE_CXX_STANDARD 14)
 endif ()
 
 add_executable(tic_tac_toe tic_tac_toe.cpp)
