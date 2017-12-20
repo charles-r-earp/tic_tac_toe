@@ -2,6 +2,8 @@
 #include <cassert>
 #include <ostream>
 
+
+
 class tic_board {
   std::string _marks;
 public:
