@@ -9,5 +9,7 @@ if (CMAKE_VERSION VERSION_LESS "3.1")
     set (CMAKE_CXX_STANDARD 17)
 endif ()
 
+set(CMAKE_CXX_FLAGS -pthread)
+
 add_executable(tic_tac_toe tic_tac_toe.cpp)
 target_include_directories(tic_tac_toe PRIVATE include)
