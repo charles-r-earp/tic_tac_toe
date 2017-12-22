@@ -36,7 +36,6 @@ void usage(const std::string& name) {
 }
 
 int main(int argc, char* argv[]) {
-<<<<<<< HEAD
   if(argc == 1)
     play();
   else if(argc == 2)
@@ -46,15 +45,5 @@ int main(int argc, char* argv[]) {
       usage(argv[0]);
   else
     usage(argv[0]);
-  return 0;    
-}
-=======
-  ai_player ai;
-  ai.display();
-  std::vector<std::string> args(argc);
-  for(int i=0; i<argc; ++i) 
-    args[i] = argv[i];
-  interface iface;
-  iface.run(args);
   return 0;    
 }
