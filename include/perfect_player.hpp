@@ -36,7 +36,7 @@ class perfect_player {
     return ss.str();
   }
   void build() {
-    std::cout << "perfect_player building..." << std::endl;
+    //std::cout << "perfect_player building..." << std::endl;
     tic_board board;
     for(int m=1; m<=9; ++m)
       results[stringify(board, m)] = evaluate(board, m);
@@ -80,6 +80,9 @@ public:
       build();
       save(fname);
     }
+  }
+  int reward(const tic_board& board, int m) {
+    return results.at(stringify(board, m));
   }
   int move(const tic_board& board) const {
     std::array<int, 9> rs;
