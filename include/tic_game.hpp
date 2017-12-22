@@ -51,5 +51,3 @@ struct tic_game {
     return game;
   }
 };
-
-
