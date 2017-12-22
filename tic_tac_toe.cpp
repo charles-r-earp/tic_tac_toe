@@ -1,15 +1,26 @@
 #include <iostream>
 #include <string>
 
-//#include "tic_board.hpp"
+#include "tic_game.hpp"
 #include "human_player.hpp"
+#include "perfect_player.hpp"
 
-template<class PlayerX, class PlayerO = PlayerO>
 void play() {
-  PlayerX playerx;
-  PlayerO playero;
   while(true) {
-    
+    tic_game game = tic_game::play<human_player, perfect_player>();
+    std::cout << game.boards.back() << std::endl << std::endl;
+    if(game.result == 1) 
+      std::cout << "X wins!";
+    else if(game.result == -1)
+      std::cout << "O wins!";
+    else
+      std::cout << "Tie!";
+    std::cout << std::endl << "Play again? ";
+    char c; 
+    std::cin >> c;
+    if(c != 'y')
+      break;
+    std::cout << std::endl;
   }
 }
 
