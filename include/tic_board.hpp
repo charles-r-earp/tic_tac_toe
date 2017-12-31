@@ -22,6 +22,9 @@ public:
     int os = std::count(_marks.cbegin(), _marks.cend(), o());
     return xs <= os ? x() : o();
   }
+  const auto& operator[](const int i) const {
+    return _marks[i];
+  } 
   void move(int m) {
     _marks[m-1] = player();
   }

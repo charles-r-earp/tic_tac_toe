@@ -1,3 +1,6 @@
+#ifndef TIC_TAC_TOE_PERFECT_PLAYER_HPP
+#define TIC_TAC_TOE_PERFECT_PLAYER_HPP
+
 #include "tic_board.hpp"
 
 #include <map>
@@ -80,8 +83,23 @@ public:
       build();
       save(fname);
     }
+    //std::cout << "perfect_player results.size() " << results.size() << std::endl;
+  }
+  std::vector<tic_board> get_boards() const {
+    std::vector<tic_board> boards;
+    std::map<std::string, bool> visited;
+    std::string marks;
+    for(auto entry : results) {
+      marks = entry.first.substr(0, 9);
+      if(visited.find(marks) == visited.end()) {
+        visited[marks] = true;
+        boards.push_back(tic_board(marks));
+      }
+    }
+    return boards;
   }
   int reward(const tic_board& board, int m) {
+    //std::cout << "reward(" << stringify(board, m) << ")" << std::endl;
     return results.at(stringify(board, m));
   }
   int move(const tic_board& board) const {
@@ -97,3 +115,5 @@ public:
     return m;
   }
 };
+
+#endif // TIC_TAC_TOE_PERFECT_PLAYER_HPP
