@@ -10,26 +10,27 @@
 #include <fstream>
 #include <algorithm>
 #include <sstream>
+#include <cmath>
 
-class ai_player_v1 {
+class ai_player_v2 {
   //static const int nclasses = 9;
   using network_t = dll::dyn_network_desc<
     dll::network_layers<
       dll::dense_layer<27, 81, dll::tanh>
-      , dll::dense_layer<81, 81, dll::tanh>
-      , dll::dense_layer<81, 3, dll::softmax>
+      , dll::dense_layer<81, 27, dll::tanh>
+      , dll::dense_layer<27, 1, dll::tanh>
     >
     , dll::batch_size<5000> 
     //, dll::updater<dll::updater_type::NADAM> 
    // , dll::shuffle
   >::network_t;
   std::vector<std::unique_ptr<network_t>> nets;
-  static std::string data_fname() { return "ai_player_v1.data"; };
-  static std::string net_fname() { return "ai_player_v1.net"; };
+  static std::string data_fname() { return "ai_player_v2.data"; };
+  static std::string net_fname() { return "ai_player_v2.net"; };
   perfect_player perfect;
   static std::string net_file(int i) {
     std::stringstream ss;
-    ss << "ai_player_v1.net" << i;
+    ss << "ai_player_v2.net" << i;
     return ss.str();
   }
   /*void save_net() { 
@@ -71,7 +72,7 @@ class ai_player_v1 {
     return data;
   } 
 public:
-  ai_player_v1() {
+  ai_player_v2() {
     for(int i=0; i<9; ++i) {
       nets.push_back(std::make_unique<network_t>());
       nets[i]->load(net_file(i));
@@ -82,9 +83,9 @@ public:
   }
   int move(const tic_board& board) {
     auto data = to_data(board);
-    std::array<int, 9> rs;
+    std::array<float, 9> rs;
     for(int m=1; m<=9; ++m)
-      rs[m-1] = nets[m-1]->predict(data) - 1;
+      rs[m-1] = nets[m-1]->features(data)[0];
     int m;
     if(board.player() == board.x())
       m = std::distance(rs.cbegin(), std::max_element(rs.cbegin(), rs.cend())) + 1;
@@ -94,28 +95,35 @@ public:
   }
   void train() {
     std::vector<tic_board> boards = perfect.get_boards();
-    //boards.resize(100);
+    //boards.resize(10);
     /*for(auto board : boards)
       std::cout << board << std::endl << std::endl;*/
     std::cout << boards.size() << std::endl;
     std::vector<etl::fast_dyn_matrix<float, 27>> data(boards.size());
-    std::vector<std::vector<int>> labels(9, std::vector<int>(boards.size()));
+    std::vector<std::vector<etl::fast_dyn_matrix<float, 1>>> rewards;
+    rewards.resize(9);
     for(int i=0; i<boards.size(); ++i) {
       data[i] = to_data(boards[i]);
-      for(int m=1; m<=9; ++m)
-        labels[m-1][i] = perfect.reward(boards[i], m) + 1;
     }
-    auto accurate = [&](auto& net, auto& labels){
+    for(int m=1; m<=9; ++m) {
+      rewards[m-1].resize(boards.size());
       for(int i=0; i<boards.size(); ++i)
-        if(net->predict(data[i]) != labels[i])
+        rewards[m-1][i][0] = perfect.reward(boards[i], m);
+    }
+    std::cout << "rewards[0].size(): " << rewards[0].size() << std::endl;
+    auto accurate = [&](auto& net, auto& rewards){
+      for(int i=0; i<boards.size(); ++i)
+        if(round(net->features(data[i])[0]) != rewards[i][0])
           return false;
       return true;
     };
-    auto accuracy = [&](auto& net, auto& labels){
+    auto accuracy = [&](auto& net, auto& rewards){
       int correct = 0;
-      for(int i=0; i<boards.size(); ++i)
-        if(net->predict(data[i]) == labels[i])
+      for(int i=0; i<boards.size(); ++i) {
+        //std::cout << net->features(data[i])[0] << " -> " << round(net->features(data[i])[0]) << " == " << rewards[i][0] << std::endl;
+        if(round(net->features(data[i])[0]) == rewards[i][0])
           ++correct;
+      }
       return float(correct)/boards.size();
     };
     /*for(auto sample : data) {
@@ -125,9 +133,9 @@ public:
     }*/
     //return;
     for(int i=0; i<9; ++i) {
-      while(!accurate(nets[i], labels[i])) {
-        nets[i]->fine_tune(data, labels[i], 100000);
-        std::cout << "train accuracy[" << i << "]: " << accuracy(nets[i], labels[i]) << std::endl;
+      while(!accurate(nets[i], rewards[i])) {
+        nets[i]->fine_tune_reg(data, rewards[i], 1);
+        std::cout << "train accuracy[" << i << "]: " << accuracy(nets[i], rewards[i]) << std::endl;
         nets[i]->store(net_file(i));
       }
       std::cout << "train success: " << i+1 << "/9" << std::endl;
