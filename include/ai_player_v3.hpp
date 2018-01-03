@@ -73,6 +73,7 @@ class ai_player_v3 {
 public:
   ai_player_v3() {
     net = std::make_unique<network_t>();
+	net->load(net_file());
   }
   void display() const {
     net->display();
