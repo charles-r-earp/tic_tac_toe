@@ -1,7 +1,7 @@
 #include "tic_game.hpp"
 #include "human_player.hpp"
 #include "perfect_player.hpp"
-#include "ai_player_v2.hpp"
+#include "ai_player_v3.hpp"
 
 #include <iostream>
 #include <string>
@@ -9,7 +9,7 @@
 
 void play() {
   while(true) {
-    tic_game game = tic_game::play<human_player, ai_player_v2>();
+    tic_game game = tic_game::play<human_player, ai_player_v3>();
     std::cout << game.boards.back() << std::endl << std::endl;
     if(game.result == 1) 
       std::cout << "X wins!";
@@ -27,14 +27,14 @@ void play() {
 }
 
 void train() {
-  ai_player_v2 ai;
+  ai_player_v3 ai;
   ai.train();
 }
 
 void test() {
   int ai_wins = 0, ties = 0, perfect_wins = 0;
   for(int i=0; i<50; ++i) {
-    tic_game game = tic_game::play<ai_player_v2, perfect_player>();
+    tic_game game = tic_game::play<ai_player_v3, perfect_player>();
     if(game.result == 1)
       ++ai_wins;
     else if(game.result == -1)
@@ -43,7 +43,7 @@ void test() {
       ++ties;
   }
   for(int i=0; i<50; ++i) {
-    tic_game game = tic_game::play<perfect_player, ai_player_v2>();
+    tic_game game = tic_game::play<perfect_player, ai_player_v3>();
     if(game.result == 1)
       ++ai_wins;
     else if(game.result == -1)
