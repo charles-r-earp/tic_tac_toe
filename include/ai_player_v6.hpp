@@ -100,7 +100,7 @@ public:
     return m;
   }
   void train_net(int index) {
-	std::cout << "training net" << index << std::endl;
+	std::cout << "training " << net_file(index) << std::endl;
 	std::vector<tic_board> boards = perfect.get_boards();
     //boards.resize(4);
     std::cout << boards.size() << std::endl;
@@ -115,7 +115,7 @@ public:
       for(int i=0; i<boards.size(); ++i)
         rewards[m-1][i][0] = perfect.reward(boards[i], m);
     }
-    std::cout << "rewards[0].size(): " << rewards[0].size() << std::endl;
+    /*std::cout << "rewards[0].size(): " << rewards[0].size() << std::endl;*/
 	auto accuracy = [&](auto& net, auto& rewards){
       int correct = 0;
       for(int i=0; i<boards.size(); ++i) {
@@ -131,6 +131,7 @@ public:
 	    nets[index]->fine_tune_reg(data, rewards[index], 1);
 	  error = 1 - accuracy(nets[index], rewards[index]);
 	  nets[index]->store(net_file(index));
+	  std::cout << "accuracy: " << 1 - error << "\r" << std::flush;
 	}
   }
   void train() {
