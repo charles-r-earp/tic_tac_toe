@@ -4,6 +4,7 @@
 #include "ai_player_v6.hpp"
 
 #include <iostream>
+#include <sstream>
 #include <string>
 #include <cstdlib>
 
@@ -29,6 +30,11 @@ void play() {
 void train() {
   ai_player_v6 ai;
   ai.train();
+}
+
+void train_net(int index) {
+  ai_player_v6 ai;
+  ai.train_net(index);
 }
 
 void test() {
@@ -77,6 +83,17 @@ int main(int argc, char* argv[]) {
     else {
       usage(argv[0]);
     }
+  }
+  else if(argc == 3) {
+    if(std::string(argv[1]) == "-train") {
+	  std::stringstream ss;
+	  ss << argv[2];
+	  int index;
+	  ss >> index;
+      train_net(index);
+    }
+	else
+	  usage(argv[0]);
   }
   else
     usage(argv[0]);
