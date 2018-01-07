@@ -99,6 +99,40 @@ public:
       m = std::distance(rs.cbegin(), std::min_element(rs.cbegin(), rs.cend())) + 1;
     return m;
   }
+  void train_net(int index) {
+	std::cout << "training net" << index << std::endl;
+	std::vector<tic_board> boards = perfect.get_boards();
+    //boards.resize(4);
+    std::cout << boards.size() << std::endl;
+    std::vector<etl::fast_dyn_matrix<float, 9>> data(boards.size());
+    std::vector<std::vector<etl::fast_dyn_matrix<float, 1>>> rewards;
+    rewards.resize(9);   
+    for(int i=0; i<boards.size(); ++i) {
+      data[i] = to_data(boards[i]);
+    }
+    for(int m=1; m<=9; ++m) {
+      rewards[m-1].resize(boards.size());
+      for(int i=0; i<boards.size(); ++i)
+        rewards[m-1][i][0] = perfect.reward(boards[i], m);
+    }
+    std::cout << "rewards[0].size(): " << rewards[0].size() << std::endl;
+	auto accuracy = [&](auto& net, auto& rewards){
+      int correct = 0;
+      for(int i=0; i<boards.size(); ++i) {
+        //std::cout << net->features(data[i])[0] << " -> " << round(net->features(data[i])[0]) << " == " << rewards[i][0] << std::endl;
+        if(round(net->features(data[i])[0]) == rewards[i][0])
+          ++correct;
+      }
+      return float(correct)/boards.size();
+    };
+	float error = 1;
+	while(error) {
+	  for(int u=0; u<10; ++u)
+	    nets[index]->fine_tune_reg(data, rewards[index], 1);
+	  error = 1 - accuracy(nets[index], rewards[index]);
+	  nets[index]->store(net_file(index));
+	}
+  }
   void train() {
     std::vector<tic_board> boards = perfect.get_boards();
     //boards.resize(4);
