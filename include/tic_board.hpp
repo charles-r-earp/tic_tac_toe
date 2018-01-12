@@ -28,6 +28,11 @@ public:
   void move(int m) {
     _marks[m-1] = player();
   }
+  tic_board next(int m) {
+	 tic_board board = *this;
+	 board.move(m);
+	 return board;
+  }
   bool legal(int m) const {
     return _marks[m-1] == blank();
   }
@@ -50,6 +55,7 @@ public:
     return false;
   }
   const std::string& marks() const { return _marks; }
+  bool operator<(const tic_board& rhs) const { return _marks < rhs._marks; }
   friend std::ostream& operator<<(std::ostream& os, const tic_board& board) {
     int i = 0;
     for(const auto m : board.marks()) {

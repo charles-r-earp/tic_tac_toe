@@ -20,24 +20,24 @@ class ai_player_v6 {
       , dll::dense_layer<18, 1, dll::tanh>
     >
     , dll::batch_size<5000> 
-    //, dll::updater<dll::updater_type::NADAM> 
-   // , dll::shuffle
+    , dll::updater<dll::updater_type::NADAM> 
+    , dll::shuffle
   >::network_t;
   std::vector<std::unique_ptr<network_t>> nets;
   //static std::string data_fname() { return "ai_player_v9.data"; };
   //static std::string net_fname() { return "ai_player_v9.net"; };
   perfect_player perfect;
-  std::ofstream log = std::ofstream(log_file(), std::ofstream::trunc);
+  //std::ofstream log = std::ofstream(log_file(), std::ofstream::trunc);
   static std::string net_file(int i) {
     std::stringstream ss;
     ss << "ai_player_v6.net" << i;
     return ss.str();
   }
-  static std::string log_file() {
+  /*static std::string log_file() {
     std::stringstream ss;
     ss << "ai_player_v6.log";
     return ss.str();
-  }
+  }*/
   /*void save_net() { 
     net->store(net_fname());
   }
@@ -80,7 +80,7 @@ public:
   ai_player_v6() {
     for(int i=0; i<9; ++i) {
       nets.push_back(std::make_unique<network_t>());
-	  nets[i]->log = &log;
+	  //nets[i]->log = &log;
       nets[i]->load(net_file(i));
     }
   }

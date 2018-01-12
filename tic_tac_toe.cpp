@@ -1,7 +1,7 @@
 #include "tic_game.hpp"
 #include "human_player.hpp"
 #include "perfect_player.hpp"
-#include "ai_player_v6.hpp"
+#include "ai_player.hpp"
 
 #include <iostream>
 #include <sstream>
@@ -10,7 +10,7 @@
 
 void play() {
   while(true) {
-    tic_game game = tic_game::play<human_player, ai_player_v6>();
+    tic_game game = tic_game::play<human_player, perfect_player>();
     std::cout << game.boards.back() << std::endl << std::endl;
     if(game.result == 1) 
       std::cout << "X wins!";
@@ -28,19 +28,19 @@ void play() {
 }
 
 void train() {
-  ai_player_v6 ai;
-  ai.train();
+  //ai_player_v6 ai;
+  //ai.train();
 }
 
 void train_net(int index) {
-  ai_player_v6 ai;
-  ai.train_net(index);
+  //ai_player_v6 ai;
+  //ai.train_net(index);
 }
 
 void test() {
   int ai_wins = 0, ties = 0, perfect_wins = 0;
   for(int i=0; i<50; ++i) {
-    tic_game game = tic_game::play<ai_player_v6, perfect_player>();
+    tic_game game = tic_game::play<ai_player, perfect_player>();
     if(game.result == 1)
       ++ai_wins;
     else if(game.result == -1)
@@ -49,7 +49,7 @@ void test() {
       ++ties;
   }
   for(int i=0; i<50; ++i) {
-    tic_game game = tic_game::play<perfect_player, ai_player_v6>();
+    tic_game game = tic_game::play<perfect_player, ai_player>();
     if(game.result == 1)
       ++ai_wins;
     else if(game.result == -1)
